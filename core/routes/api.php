@@ -23,6 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Admin routes
 Route::put('/assign/{id}', [Assign::class, 'assign']);
 
+Route::get('/reads', [Assign::class, 'assignedData']);
+
 
 // User routes
 Route::post('/register',  [UserDataController::class, 'register']);

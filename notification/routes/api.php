@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NotifcationController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/email', [NotifcationController::class, 'email']);
+Route::post('/email', [NotificationController::class, 'email']);
 
-Route::post('/notification', [NotifcationController::class, 'notification']);
+Route::post('/notification', [NotificationController::class, 'notification']);

@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Main;
 use App\Models\Assign;
-use App\Models\Teacher;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\SendMail;
 use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
@@ -27,43 +24,32 @@ class AdminController extends Controller
                 $user->approval_status = $request->approval_status ?? 0;
                 $user->save();
                 
-                if ($user->approval_status == 1){
-                    $messages = [
-                        'user_email' => $user->email,
-                        'title' => 'Congratulations!',
-                        'body' => 'You Profile is Approved by Admin.',
-                    ];
+                // if ($user->approval_status == 1){
+
+                //     $messages = [
+                //         'user_email' => $user->email,
+                //         'title' => 'Congratulations!',
+                //         'body' => 'You Profile is Approved by Admin.',
+                //     ];
                     
-                    $user = json_decode(Http::post('http://localhost:8002/api/email', $messages));
-                    return response()->json($user);
-                } 
+                //     $userMail = json_encode(Http::post('http://localhost:8002/api/email', $messages));
+                // } 
                     
-                date_default_timezone_set('Asia/Kolkata');
                 $user->assignStudent()->insert([
                     'student_id' => $request->student_id ?? 0,
                     'assigned_teacher_id' => $request->assigned_teacher_id ?? 0,
                     'created_at' => now(),
                     'updated_at' => now(),
-                ]);
+                ]); 
 
-                $td = $request->assigned_teacher_id;
+                $teach_id = ['teacher_id' => $request->assigned_teacher_id];
 
-                $teacher = Teacher::find($td);
-                $teacher_main = $teacher->main_id;
-                
-                $user_teacher = Main::find($teacher_main);
-                $t_email = $user_teacher->email;
-                
-                // $user_teacher->notify(new TeacherNotification($t_email));
-
-                $userNotification = json_decode(Http::post('http://localhost:8002/api/email', $t_email));
-
-                return json_encode(['Message' =>"A new Notification sent successfully to the Teacher."]);
-            
-            }
+                $user = Http::post('http://localhost:8002/api/notification', $teach_id);
+                }
+            return json_encode(['Success:' => 'Email and Notification send Successfully.']);  
         }
         catch(\Exception $e){
-            return json_encode(['Error: '=> $e->getMessage()]);  
+            return json_encode(['Error:' => $e->getMessage()]);  
         }
     }
 

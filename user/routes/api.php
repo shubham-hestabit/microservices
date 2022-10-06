@@ -41,6 +41,6 @@ Route::middleware('auth:api')->group(function(){
 
 
 //assign table related routes
-Route::put('assign/{main_id}',  [AdminController::class, 'assign'])->middleware('auth:api');
+Route::put('assign/{id}',  [AdminController::class, 'assign'])->middleware('auth:api');
 
 Route::get('reads',  [AdminController::class, 'read'])->middleware('auth:api');

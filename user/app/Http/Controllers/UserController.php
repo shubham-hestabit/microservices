@@ -44,7 +44,7 @@ class UserController extends Controller
             } 
     
             $token = $user->createToken('Token')->accessToken;
-            return json_encode(["token"=>$token, "user"=>$user]);
+            return json_encode(["Token"=>$token, "User"=>$user]);
 
         } catch(\Exception $e) {
             return json_encode(["error"=>$e->getMessage()]);
