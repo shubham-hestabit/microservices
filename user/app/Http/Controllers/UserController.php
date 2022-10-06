@@ -8,7 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\TeacherResource;
 
-class UserApiController extends Controller
+class UserController extends Controller
 {
     // Registeration Method
     public function create(Request $request)
@@ -56,11 +56,7 @@ class UserApiController extends Controller
     
     //Login Method
     public function login(Request $request){
-
-        $user = [
-            'email' => $request->email,
-            'password' => $request->password,
-        ];
+        $user = $request->only('email', 'password');
        
         if (auth()->attempt($user)){
 

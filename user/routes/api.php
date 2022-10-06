@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserApiController;
-use App\Http\Controllers\AdminApiController; 
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -22,25 +22,25 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 // User Routes
-Route::post('register',  [UserApiController::class, 'create']);
+Route::post('register',  [UserController::class, 'create']);
 
-Route::post('login',  [UserApiController::class, 'login']); 
+Route::post('login',  [UserController::class, 'login']); 
 
 
 // Passport token routes
 Route::middleware('auth:api')->group(function(){
 
-    Route::get('read/{id}',  [UserApiController::class, 'read']);
+    Route::get('read/{id}',  [UserController::class, 'read']);
 
-    Route::put('update/{id}',  [UserApiController::class, 'update']);
+    Route::put('update/{id}',  [UserController::class, 'update']);
 
-    Route::delete('delete/{id}',  [UserApiController::class, 'destroy']);
+    Route::delete('delete/{id}',  [UserController::class, 'destroy']);
 
-    Route::get('/logout', [UserApiController::class, 'logout']);
+    Route::get('/logout', [UserController::class, 'logout']);
 });
 
 
 //assign table related routes
-Route::put('assign/{main_id}',  [AdminApiController::class, 'assign'])->middleware('auth:api');
+Route::put('assign/{main_id}',  [AdminController::class, 'assign'])->middleware('auth:api');
 
-Route::get('reads',  [AdminApiController::class, 'read'])->middleware('auth:api');
+Route::get('reads',  [AdminController::class, 'read'])->middleware('auth:api');

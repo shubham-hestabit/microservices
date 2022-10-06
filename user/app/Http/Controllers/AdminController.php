@@ -10,7 +10,7 @@ use App\Models\Teacher;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\TeacherNotification;
 
-class AdminApiController extends Controller
+class AdminController extends Controller
 {
 
     public function assign(Request $request, $id){

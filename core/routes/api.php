@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Assign;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Assign;
+use App\Http\Controllers\UserDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/assign/{id}', [Assign::class, 'assign']);
+
+
+Route::post('/register',  [UserDataController::class, 'create']);
+
+Route::post('/login',  [UserDataController::class, 'login']);
+
+Route::get('/logout', [UseDataController::class, 'logout']);
+
+Route::get('/read/{id}',  [UserDataController::class, 'read']);
+
+Route::put('/update/{id}',  [UserDataController::class, 'update']);
+
+Route::delete('/delete/{id}',  [UserDataController::class, 'destroy']);

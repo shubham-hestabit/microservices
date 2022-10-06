@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 
 class TeacherNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable;  
     public $note;
     /**
      * Create a new notification instance.

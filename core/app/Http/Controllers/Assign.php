@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Http;
 
 class Assign extends Controller
 {
+    public $token;
+
+    public function __construct(Request $request)
+    {
+        $this->token = $request->bearerToken() ?? '';
+    }
 
     public function assign($id)
     {
