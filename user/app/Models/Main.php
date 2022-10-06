@@ -13,6 +13,8 @@ class Main extends Authenticatable
 
     protected $primaryKey = 'id';
 
+    protected $hidden = [ 'password'];
+
     public function studentData(){
 
         return $this->hasOne('App\Models\Student');

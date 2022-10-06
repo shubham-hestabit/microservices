@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Main;
-use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -12,48 +11,44 @@ class UserController extends Controller
     public function register(Request $request)
     {
 
-        $user = new Main();
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->address = $request->address;
-        $user->current_school = $request->current_school;
-        $user->previous_school = $request->previous_school;
-        $user->password = bcrypt($request->password);
-        $user->r_id = $request->r_id ?? 3;
-        $user->approval_status = 0;
-        $user->save();
-
-        if($user->r_id == 1){
-            $user->approval_status = 1;
+        try{
+            $user = new Main();
+    
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->address = $request->address;
+            $user->current_school = $request->current_school;
+            $user->previous_school = $request->previous_school;
+            $user->password = bcrypt($request->password);
+            $user->r_id = $request->r_id ?? 3;
+            $user->approval_status = 0;
             $user->save();
-            echo "New Admin Added Successfully.\n";
-        }
-        // elseif($user->r_id == 2){
-        //     $user->teacherData()->create([
-        //         "main_id" => $user->id,
-        //         "experience" => $request->experience,
-        //         "expertise_subjects" => $request->expertise_subjects,
-        //     ]);
-        //     echo "New Teacher Data Added Successfully.\n";
-        // }
-        elseif ($user->r_id == 3){
-            $user->studentData()->create([
-                "main_id" => $user->id,
-                "father_name" => $request->father_name,
-                "mother_name" => $request->mother_name,
-            ]);
-            echo "New Student Data Added Successfully.\n";
-        } 
-        else {
-            return json_encode(['Messages'=>'askdnasjkd']);
-        }
+    
+            if($user->r_id == 1){
+                $user->approval_status = 1;
+                $user->save();
+            }
+            elseif($user->r_id == 2){
+                $user->teacherData()->create([
+                    "main_id" => $user->id,
+                    "experience" => $request->experience,
+                    "expertise_subjects" => $request->expertise_subjects,
+                ]);
+            }
+            elseif ($user->r_id == 3){
+                $user->studentData()->create([
+                    "main_id" => $user->id,
+                    "father_name" => $request->father_name,
+                    "mother_name" => $request->mother_name,
+                ]);
+            } 
+    
+            $token = $user->createToken('Token')->accessToken;
+            return json_encode(["token"=>$token, "user"=>$user]);
 
-        Log::info(json_encode($user));
-        $token = $user->createToken('Token')->accessToken;
-        return json_encode(['token'=>$token]);
-
-        return json_encode($token);
+        } catch(\Exception $e) {
+            return json_encode(["error"=>$e->getMessage()]);
+        }
     }
     
     //Login Method
@@ -63,7 +58,7 @@ class UserController extends Controller
         if (auth()->attempt($user)){
 
             $token = auth()->user()->createToken('Token')->accessToken;
-            return json_encode(['token'=>$token]);
+            return json_encode(['Message'=>'User Logged in Successfully.', 'token'=>$token]);
    
         }
         else{            
@@ -75,41 +70,29 @@ class UserController extends Controller
     public function logout()
     {
         auth()->user()->token()->revoke();
-        return json_encode([
-            'message' => 'User logged out successfully.'
-        ]);
+        return json_encode(['message' => 'User logged out successfully.' ]);
     }
     
     // Reading Method
     public function read($id)
     {
-        $user = Main::with('studentData', 'teacherData')->find($id);
+        $user = Main::with('studentData', 'teacherData', 'assignStudent', 'assignTeacher')->find($id);
 
         try{
-            if(is_null($user)){
+            if($user == null){
                 throw new \Exception("User data not found.");
             }
-            elseif($user->r_id == 1){
-                return "This ID belongs to Admin.";
-            }
-            elseif($user->r_id == 2){
-                echo "You are viewing Teacher Data.\n";
-                return json_encode($user);
-            }
-            elseif($user->r_id == 3){
-                echo "You are viewing Student Data.\n";
-                return json_encode($user);
-            }
+            return json_encode(["User Data:" => $user]);
         }
         catch(\Exception $e){
-            echo $e->getMessage();
+            return json_encode(['Error: '=> $e->getMessage()]);
         }
     }
 
     // Updation Method
     public function update(Request $request, $id)
     {
-        $user = Main::with('studentData', 'teacherData')->find($id);
+        $user = Main::with('studentData', 'teacherData', 'assignStudent', 'assignTeacher')->find($id);
 
         try{
             if(is_null($user)){
@@ -129,48 +112,32 @@ class UserController extends Controller
                         'experience' => $request->experience ?? $user->experience,
                         'expertise_subjects' => $request->expertise_subjects ?? $user->expertise_subjects,
                     ]);
-                    echo "Teacher Data Updated Successfully.\n";
-                    return json_encode($user);
+                    return json_encode(["Teacher Data Updated:" => $user]);
                 }
                 elseif ($user->r_id == 3){
                     $user->studentData()->update([
                         "father_name" => $request->father_name ?? $user->father_name,
                         "mother_name" => $request->mother_name ?? $user->mother_name,
                     ]);
-                    echo "Student Data Updated Successfully.\n";
-                    return json_encode($user);
+                    return json_encode(["Student Data Updated:" => $user]);
                 }
             }
         }
         catch(\Exception $e){
-            echo $e->getMessage();
+            return json_encode(['Error: '=> $e->getMessage()]);    
         }
     }
     
     // Deletion Method
     public function destroy($id)
     {
-        $user = Main::with('studentData', 'teacherData')->find(auth()->user()->$id);
-
-        try{
-            if(is_null($user)){
-                throw new \Exception("User data not found for Deletion.");
-            }
-            else if($user->r_id == 2){
-                echo "Teacher Data Deleted Successfully.\n";
-                $user->delete();
-            }
-            elseif ($user->r_id == 3){
-                echo "Student Data Deleted Successfully.\n";
-                $user->delete();
-            }
-            // elseif($user->r_id == 1){
-            //     echo "Admin Data Deleted Successfully.\n";
-            //     $user->delete();
-            // }
+        if (auth()->user()->r_id == 1){
+            $user = Main::find($id);
+            $user->delete();
+            return json_encode(['message' => 'User deleted successfully.']);    
         }
-        catch(\Exception $e){
-            echo $e->getMessage();
+        else{
+            return json_encode(['message' => 'Unauthorized User']);
         }
     }
 }

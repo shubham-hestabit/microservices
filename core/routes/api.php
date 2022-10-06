@@ -20,9 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/assign/{id}', [Assign::class, 'assign']);
+// Admin routes
+Route::put('/assign/{id}', [Assign::class, 'assign']);
 
 
+// User routes
 Route::post('/register',  [UserDataController::class, 'register']);
 
 Route::post('/login',  [UserDataController::class, 'login']);

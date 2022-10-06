@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Main;
-use App\Mail\SendMail;
 use App\Models\Assign;
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Mail;
-use App\Notifications\TeacherNotification;
+use App\Mail\SendMail;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -29,20 +29,21 @@ class AdminController extends Controller
                 
                 if ($user->approval_status == 1){
                     $messages = [
+                        'user_email' => $user->email,
                         'title' => 'Congratulations!',
                         'body' => 'You Profile is Approved by Admin.',
                     ];
-                    $user_email = $user->email;
-                    Mail::to($user_email)->send(new SendMail ($messages));
-                    echo "Profile Approval mail sent successfully to the User.<br><br><br>";
+                    
+                    $user = json_decode(Http::post('http://localhost:8002/api/email', $messages));
+                    return response()->json($user);
                 } 
                     
                 date_default_timezone_set('Asia/Kolkata');
                 $user->assignStudent()->insert([
-                'student_id' => $request->student_id ?? 0,
-                'assigned_teacher_id' => $request->assigned_teacher_id ?? 0,
-                'created_at' => now(),
-                'updated_at' => now(),
+                    'student_id' => $request->student_id ?? 0,
+                    'assigned_teacher_id' => $request->assigned_teacher_id ?? 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
                 $td = $request->assigned_teacher_id;
@@ -53,14 +54,16 @@ class AdminController extends Controller
                 $user_teacher = Main::find($teacher_main);
                 $t_email = $user_teacher->email;
                 
-                $user_teacher->notify(new TeacherNotification($t_email));
+                // $user_teacher->notify(new TeacherNotification($t_email));
 
-                return "A new Notification sent successfully to the Teacher.";
+                $userNotification = json_decode(Http::post('http://localhost:8002/api/email', $t_email));
+
+                return json_encode(['Message' =>"A new Notification sent successfully to the Teacher."]);
             
             }
         }
         catch(\Exception $e){
-            echo $e->getMessage();
+            return json_encode(['Error: '=> $e->getMessage()]);  
         }
     }
 
@@ -68,6 +71,6 @@ class AdminController extends Controller
     {
         $assign = Assign::get();
 
-        return response()->json($assign); 
+        return json_encode(['Data' => $assign]); 
     }
 }

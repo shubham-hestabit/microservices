@@ -14,10 +14,12 @@ class Assign extends Controller
         $this->token = $request->bearerToken() ?? '';
     }
 
-    public function assign($id)
+    public function assign(Request $request, $id)
     {
-        $data = json_decode(Http::get('http://localhost:8001/api/assign'.$id));
-        return response()->json($data);
+
+        $data = $request->all();
+        $user = json_decode(Http::withToken($this->token)->put('http://localhost:8001/api/assign/'.$id, $data));
+        return response()->json($user);
     }
 
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class UserDataController extends Controller
 {
@@ -18,22 +17,20 @@ class UserDataController extends Controller
     public function register(Request $request)
     {
         $data = $request->all();
-        Log::info(json_encode($data));
-        $user = json_decode(Http::post('http://localhost:8001/api/register', $data));
-        dd($user);
+        $user = json_decode(Http::post('http://localhost:8001/api/register/', $data));
         return response()->json($user);
     }
 
     public function login(Request $request)
     {
         $data = $request->only('email', 'password');   
-        $user = json_decode(Http::post('http://localhost:8001/api/login', $data));
+        $user = json_decode(Http::post('http://localhost:8001/api/login/', $data));
         return response()->json($user);
     }
 
     public function logout()
     {
-        $user = json_decode(Http::withToken($this->token)->get('http://localhost:8001/api/logout'));
+        $user = json_decode(Http::withToken($this->token)->get('http://localhost:8001/api/logout/'));
         return response()->json($user);
     }
 
@@ -43,16 +40,17 @@ class UserDataController extends Controller
         return response()->json($user);
     }
 
-    public function update($id)
+    public function update(Request $request, $id)
     {
-        $user = json_decode(Http::withToken($this->token)->put('http://localhost:8001/api/update'.$id));
+        $data = $request->all();
+        $user = json_decode(Http::withToken($this->token)->put('http://localhost:8001/api/update/'.$id , $data));
         return response()->json($user);
+    
     }
 
     public function destroy($id)
     {
-        $user = json_decode(Http::withToken($this->token)->delete('http://localhost:8001/api/delete'.$id));
+        $user = json_decode(Http::withToken($this->token)->delete('http://localhost:8001/api/delete/'.$id));
         return response()->json($user);
     }
-
 }
