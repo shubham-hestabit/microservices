@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/assign/{id}', [Assign::class, 'assign']);
 
 
-Route::post('/register',  [UserDataController::class, 'create']);
+Route::post('/register',  [UserDataController::class, 'register']);
 
 Route::post('/login',  [UserDataController::class, 'login']);
 

@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Main;
-use App\Http\Resources\UserResource;
-use App\Http\Resources\StudentResource;
-use App\Http\Resources\TeacherResource;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
     // Registeration Method
-    public function create(Request $request)
+    public function register(Request $request)
     {
 
         $user = new Main();
@@ -31,14 +29,14 @@ class UserController extends Controller
             $user->save();
             echo "New Admin Added Successfully.\n";
         }
-        elseif($user->r_id == 2){
-            $user->teacherData()->create([
-                "main_id" => $user->id,
-                "experience" => $request->experience,
-                "expertise_subjects" => $request->expertise_subjects,
-            ]);
-            echo "New Teacher Data Added Successfully.\n";
-        }
+        // elseif($user->r_id == 2){
+        //     $user->teacherData()->create([
+        //         "main_id" => $user->id,
+        //         "experience" => $request->experience,
+        //         "expertise_subjects" => $request->expertise_subjects,
+        //     ]);
+        //     echo "New Teacher Data Added Successfully.\n";
+        // }
         elseif ($user->r_id == 3){
             $user->studentData()->create([
                 "main_id" => $user->id,
@@ -46,12 +44,16 @@ class UserController extends Controller
                 "mother_name" => $request->mother_name,
             ]);
             echo "New Student Data Added Successfully.\n";
+        } 
+        else {
+            return json_encode(['Messages'=>'askdnasjkd']);
         }
 
+        Log::info(json_encode($user));
         $token = $user->createToken('Token')->accessToken;
-        $user_data =  new UserResource($user);
-        return response()->json(['token'=>$token, 'user' => $user_data]);
-        
+        return json_encode(['token'=>$token]);
+
+        return json_encode($token);
     }
     
     //Login Method
@@ -61,11 +63,11 @@ class UserController extends Controller
         if (auth()->attempt($user)){
 
             $token = auth()->user()->createToken('Token')->accessToken;
-            return response()->json(['token'=>$token]);
+            return json_encode(['token'=>$token]);
    
         }
         else{            
-            return response()->json(['Error'=>'Unauthorized User']);
+            return json_encode(['Error'=>'Unauthorized User']);
         }
     }
 
@@ -73,7 +75,7 @@ class UserController extends Controller
     public function logout()
     {
         auth()->user()->token()->revoke();
-        return response()->json([
+        return json_encode([
             'message' => 'User logged out successfully.'
         ]);
     }
@@ -92,11 +94,11 @@ class UserController extends Controller
             }
             elseif($user->r_id == 2){
                 echo "You are viewing Teacher Data.\n";
-                return new TeacherResource($user);
+                return json_encode($user);
             }
             elseif($user->r_id == 3){
                 echo "You are viewing Student Data.\n";
-                return new StudentResource($user);
+                return json_encode($user);
             }
         }
         catch(\Exception $e){
@@ -128,7 +130,7 @@ class UserController extends Controller
                         'expertise_subjects' => $request->expertise_subjects ?? $user->expertise_subjects,
                     ]);
                     echo "Teacher Data Updated Successfully.\n";
-                    return new TeacherResource($user); 
+                    return json_encode($user);
                 }
                 elseif ($user->r_id == 3){
                     $user->studentData()->update([
@@ -136,7 +138,7 @@ class UserController extends Controller
                         "mother_name" => $request->mother_name ?? $user->mother_name,
                     ]);
                     echo "Student Data Updated Successfully.\n";
-                    return new StudentResource($user);
+                    return json_encode($user);
                 }
             }
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class UserDataController extends Controller
 {
@@ -14,15 +15,19 @@ class UserDataController extends Controller
         $this->token = $request->bearerToken() ?? '';
     }
 
-    public function register()
+    public function register(Request $request)
     {
-        $user = json_decode(Http::post('http://localhost:8001/api/register'));
+        $data = $request->all();
+        Log::info(json_encode($data));
+        $user = json_decode(Http::post('http://localhost:8001/api/register', $data));
+        dd($user);
         return response()->json($user);
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        $user = json_decode(Http::post('http://localhost:8001/api/login'));
+        $data = $request->only('email', 'password');   
+        $user = json_decode(Http::post('http://localhost:8001/api/login', $data));
         return response()->json($user);
     }
 
@@ -34,7 +39,7 @@ class UserDataController extends Controller
 
     public function read($id)
     {
-        $user = json_decode(Http::withToken($this->token)->get('http://localhost:8001/api/read'.$id));
+        $user = json_decode(Http::withToken($this->token)->get('http://localhost:8001/api/read/'.$id));
         return response()->json($user);
     }
 
