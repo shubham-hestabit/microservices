@@ -24,16 +24,16 @@ class AdminController extends Controller
                 $user->approval_status = $request->approval_status ?? 0;
                 $user->save();
                 
-                // if ($user->approval_status == 1){
+                if ($user->approval_status == 1){
 
-                //     $messages = [
-                //         'user_email' => $user->email,
-                //         'title' => 'Congratulations!',
-                //         'body' => 'You Profile is Approved by Admin.',
-                //     ];
+                    $messages = [
+                        'user_email' => $user->email,
+                        'title' => 'Congratulations!',
+                        'body' => 'You Profile is Approved by Admin.',
+                    ];
                     
-                //     $userMail = json_encode(Http::post('http://localhost:8002/api/email', $messages));
-                // } 
+                    $userMail = json_decode(Http::post('http://localhost:8002/api/email', $messages));
+                } 
                     
                 $user->assignStudent()->insert([
                     'student_id' => $request->student_id ?? 0,
@@ -44,9 +44,12 @@ class AdminController extends Controller
 
                 $teach_id = ['teacher_id' => $request->assigned_teacher_id];
 
-                $user = Http::post('http://localhost:8002/api/notification', $teach_id);
-                }
-            return json_encode(['Success:' => 'Email and Notification send Successfully.']);  
+                $userNotify = json_encode(Http::post('http://localhost:8002/api/notification', $teach_id));
+
+                return json_encode([
+                    'Success:' => 'Email and Notification send Successfully.'
+                ]);  
+            }
         }
         catch(\Exception $e){
             return json_encode(['Error:' => $e->getMessage()]);  

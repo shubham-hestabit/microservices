@@ -31,7 +31,7 @@ Route::post('/register',  [UserDataController::class, 'register']);
 
 Route::post('/login',  [UserDataController::class, 'login']);
 
-Route::get('/logout', [UseDataController::class, 'logout']);
+Route::get('/logout', [UserDataController::class, 'logout']);
 
 Route::get('/read/{id}',  [UserDataController::class, 'read']);
 

@@ -22,8 +22,8 @@ class NotificationController extends Controller
 
     public function notification(Request $request)
     {  
-        $tid = $request['teach_id'];
-        
+        $tid = $request['teacher_id'];
+
         $teacher = Teacher::find($tid);
         $teacher_main = $teacher->main_id;
 
