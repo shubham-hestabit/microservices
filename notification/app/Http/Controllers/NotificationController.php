@@ -11,6 +11,9 @@ use App\Models\Main;
 
 class NotificationController extends Controller
 {
+    /**
+     * Make this function for sending a Email to the User on Profile Approval.
+     */
     public function email(Request $request)
     {   
         $messages = $request->only('user_email', 'title', 'body');
@@ -20,6 +23,9 @@ class NotificationController extends Controller
         return json_encode(["Message" => "Email sent Successfully."]);
     }
 
+    /**
+     * Make this function for sending a Notification and Email to the Teacher on Student Assigning.
+     */
     public function notification(Request $request)
     {  
         $tid = $request['teacher_id'];

@@ -19,6 +19,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+/**
+ * This Route is for Sending Emails.
+ */
 Route::post('/email', [NotificationController::class, 'email']);
 
+/**
+ * This Route is for Sending Notifications.
+ */
 Route::post('/notification', [NotificationController::class, 'notification']);
