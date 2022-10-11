@@ -21,13 +21,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-// User Routes
+/**
+ * Make Routes for Registeration and Login.
+ */ 
 Route::post('register',  [UserController::class, 'register']);
 
 Route::post('login',  [UserController::class, 'login']); 
 
 
-// Passport token routes
+/**
+ * Make Routes for Passport token authentication.
+ */ 
 Route::middleware('auth:api')->group(function(){
 
     Route::get('read/{id}',  [UserController::class, 'read']);
@@ -40,7 +44,9 @@ Route::middleware('auth:api')->group(function(){
 });
 
 
-//assign table related routes
+/**
+ * Makr 'assign' and 'reads' Routes for student assigning and chaking assign table data.
+ */
 Route::put('assign/{id}',  [AdminController::class, 'assign'])->middleware('auth:api');
 
 Route::get('reads',  [AdminController::class, 'read'])->middleware('auth:api');

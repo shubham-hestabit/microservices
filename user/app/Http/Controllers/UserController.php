@@ -7,7 +7,9 @@ use App\Models\Main;
 
 class UserController extends Controller
 {
-    // Registeration Method
+    /** 
+     * This is a User Registeration function.
+    */ 
     public function register(Request $request)
     {
 
@@ -51,7 +53,10 @@ class UserController extends Controller
         }
     }
     
-    //Login Method
+    /** 
+     * This is a User Login function.
+     * This function generate a token for Authentication.
+    */ 
     public function login(Request $request){
         $user = $request->only('email', 'password');
        
@@ -66,14 +71,19 @@ class UserController extends Controller
         }
     }
 
-    //Logout Method
+     /** 
+     * This function is for Logout the User.
+    */ 
     public function logout()
     {
         auth()->user()->token()->revoke();
         return json_encode(['message' => 'User logged out successfully.' ]);
     }
     
-    // Reading Method
+    /** 
+     * We create this function for checking the User details.
+     * Reading Method function
+    */ 
     public function read($id)
     {
         $user = Main::with('studentData', 'teacherData', 'assignStudent', 'assignTeacher')->find($id);
@@ -89,7 +99,10 @@ class UserController extends Controller
         }
     }
 
-    // Updation Method
+    /** 
+     * We create this function for Update the User details.
+     * Updation Method
+    */ 
     public function update(Request $request, $id)
     {
         $user = Main::with('studentData', 'teacherData', 'assignStudent', 'assignTeacher')->find($id);
@@ -128,7 +141,10 @@ class UserController extends Controller
         }
     }
     
-    // Deletion Method
+    /** 
+     * We create this function for Delete the User details.
+     * Delete Method
+    */ 
     public function destroy($id)
     {
         if (auth()->user()->r_id == 1){

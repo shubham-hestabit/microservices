@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Http;
 class AdminController extends Controller
 {
 
+    /**
+     * Approve the user profile.
+     * Assigns the student to Teacher.
+     * Send an Email to user on Profile Appraval.
+     * Send an Notification and Email to the Teacher on each student assigning.
+     */
     public function assign(Request $request, $id){
         
         $user = Main::with('studentData', 'teacherData', 'assignStudent', 'assignTeacher')->find($id);
@@ -56,6 +62,9 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * this function is used for getting the Assign table data.
+     */
     public function read()
     {
         $assign = Assign::get();
