@@ -20,13 +20,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Admin routes
+/**
+ * Below two routes belong to Admin for assign and approval Functionality.
+ */
 Route::put('/assign/{id}', [Assign::class, 'assign']);
 
 Route::get('/reads', [Assign::class, 'assignedData']);
 
 
-// User routes
+/** 
+ * Make below routes for Login and Registeration functionality and also for performing CRUD operations.
+ */
 Route::post('/register',  [UserDataController::class, 'register']);
 
 Route::post('/login',  [UserDataController::class, 'login']);
