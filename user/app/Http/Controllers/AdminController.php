@@ -17,8 +17,14 @@ class AdminController extends Controller
      * Send an Notification and Email to the Teacher on each student assigning.
      */
     public function assign(Request $request, $id){
+
+        $request->validate([
+            'student_id' => 'required|numeric',
+            'assigned_teacher_id' => 'required|numeric',
+            'approval_status' => 'numeric',
+        ]);
         
-        $user = Main::with('studentData', 'teacherData', 'assignStudent', 'assignTeacher')->find($id);
+        $user = Main::with('studentData', 'teacherData')->find($id);
         
         try{
             if(is_null($user)){

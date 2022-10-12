@@ -12,45 +12,58 @@ class UserController extends Controller
     */ 
     public function register(Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'address' => 'required',
+            'picture' => 'image',
+            'current_school' => 'required',
+            'previous_school' => 'required',
+            'password' => 'required|min:8|max:100',
+        ]);
 
-        try{
-            $user = new Main();
-    
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->address = $request->address;
-            $user->current_school = $request->current_school;
-            $user->previous_school = $request->previous_school;
-            $user->password = bcrypt($request->password);
-            $user->r_id = $request->r_id ?? 3;
-            $user->approval_status = 0;
+        $user = new Main();
+        
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->address = $request->address;
+        $user->current_school = $request->current_school;
+        $user->previous_school = $request->previous_school;
+        $user->password = bcrypt($request->password);
+        $user->r_id = $request->r_id ?? 3;
+        $user->approval_status = 0;
+        $user->save();
+        
+        if($user->r_id == 1){
+            $user->approval_status = 1;
             $user->save();
-    
-            if($user->r_id == 1){
-                $user->approval_status = 1;
-                $user->save();
-            }
-            elseif($user->r_id == 2){
-                $user->teacherData()->create([
-                    "main_id" => $user->id,
-                    "experience" => $request->experience,
-                    "expertise_subjects" => $request->expertise_subjects,
-                ]);
-            }
-            elseif ($user->r_id == 3){
-                $user->studentData()->create([
-                    "main_id" => $user->id,
-                    "father_name" => $request->father_name,
-                    "mother_name" => $request->mother_name,
-                ]);
-            } 
-    
-            $token = $user->createToken('Token')->accessToken;
-            return json_encode(["Token"=>$token, "User"=>$user]);
-
-        } catch(\Exception $e) {
-            return json_encode(["error"=>$e->getMessage()]);
         }
+        elseif($user->r_id == 2){
+            $request->validate([
+                "experience" => 'required',
+                "expertise_subjects" => 'required',
+            ]);
+            $user->teacherData()->create([
+                "main_id" => $user->id,
+                "expertise_subjects" => $request->expertise_subjects,
+                "experience" => $request->experience,
+            ]);
+        }
+        elseif ($user->r_id == 3){
+            $request->validate([
+                "father_name" => 'required',
+                "mother_name" => 'required',
+            ]);
+            $user->studentData()->create([
+                "main_id" => $user->id,
+                "father_name" => $request->father_name,
+                "mother_name" => $request->mother_name,
+            ]);
+        } 
+            
+        $token = $user->createToken('Token')->accessToken;
+        return json_encode(["Token"=>$token, "User"=>$user]);
+
     }
     
     /** 
@@ -58,6 +71,12 @@ class UserController extends Controller
      * This method generate a token for Authentication.
     */ 
     public function login(Request $request){
+        
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:8|max:100',
+        ]);
+
         $user = $request->only('email', 'password');
        
         if (auth()->attempt($user)){
@@ -105,7 +124,20 @@ class UserController extends Controller
     */ 
     public function update(Request $request, $id)
     {
-        $user = Main::with('studentData', 'teacherData', 'assignStudent', 'assignTeacher')->find($id);
+        $request->validate([
+            'name' => 'regex:/^[a-zA-ZÑñ\s]+$/',
+            'email' => 'email',
+            'address' => 'string',
+            'current_school' => 'string',
+            'previous_school' => 'string',
+            'password' => 'string',
+            'experience' => 'numeric',
+            'expertise_subjects' => 'string',
+            'father_name' => 'string',
+            'mother_name' => 'string',
+        ]);
+
+        $user = Main::with('studentData', 'teacherData')->find($id);
 
         try{
             if(is_null($user)){

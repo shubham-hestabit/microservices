@@ -22,6 +22,12 @@ class Assign extends Controller
      */
     public function assign(Request $request, $id)
     {
+        $request->validate([
+            'student_id' => 'required|numeric',
+            'assigned_teacher_id' => 'required|numeric',
+            'approval_status' => 'numeric',
+        ]);
+        
         $data = $request->all();
         $user = json_decode(Http::withToken($this->token)->put('http://localhost:8001/api/assign/'.$id, $data));
         return response()->json($user);

@@ -32,6 +32,11 @@ class UserDataController extends Controller
      */
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:8|max:100',
+        ]);
+
         $data = $request->only('email', 'password');   
         $user = json_decode(Http::post('http://localhost:8001/api/login/', $data));
         return response()->json($user);
