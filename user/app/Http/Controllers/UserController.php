@@ -8,7 +8,7 @@ use App\Models\Main;
 class UserController extends Controller
 {
     /** 
-     * This is a User Registeration function.
+     * This is a User Registeration method.
     */ 
     public function register(Request $request)
     {
@@ -54,8 +54,8 @@ class UserController extends Controller
     }
     
     /** 
-     * This is a User Login function.
-     * This function generate a token for Authentication.
+     * This is a User Login method.
+     * This method generate a token for Authentication.
     */ 
     public function login(Request $request){
         $user = $request->only('email', 'password');
@@ -71,8 +71,8 @@ class UserController extends Controller
         }
     }
 
-     /** 
-     * This function is for Logout the User.
+    /** 
+     * This method is for Logout the User.
     */ 
     public function logout()
     {
@@ -81,8 +81,8 @@ class UserController extends Controller
     }
     
     /** 
-     * We create this function for checking the User details.
-     * Reading Method function
+     * We create this method for checking the User details.
+     * Reading Method 
     */ 
     public function read($id)
     {
@@ -100,7 +100,7 @@ class UserController extends Controller
     }
 
     /** 
-     * We create this function for Update the User details.
+     * We create this method for Update the User details.
      * Updation Method
     */ 
     public function update(Request $request, $id)
@@ -142,7 +142,7 @@ class UserController extends Controller
     }
     
     /** 
-     * We create this function for Delete the User details.
+     * We create this method for Delete the User details.
      * Delete Method
     */ 
     public function destroy($id)
