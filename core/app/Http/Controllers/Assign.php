@@ -28,6 +28,8 @@ class Assign extends Controller
             'approval_status' => 'numeric',
         ]);
         
+        $var = 'hello';
+
         $data = $request->all();
         $user = json_decode(Http::withToken($this->token)->put('http://localhost:8001/api/assign/'.$id, $data));
         return response()->json($user);
